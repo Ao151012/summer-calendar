@@ -189,7 +189,7 @@
 
 <script>
 // ============ DATA ============
-const defaultEvents = [
+var defaultEvents = [
   {id:1,title:"国际象棋课",start:"2026-07-04",end:"2026-07-14",time:"9:00-12:00",color:"chess",note:"妈妈送，刘阿姨接",wo:false},
   {id:2,title:"游泳课集训",start:"2026-07-13",end:"2026-07-24",time:"13:00-14:30",color:"swim",note:"刘阿姨接送并陪伴",wo:true},
   {id:3,title:"国际象棋比赛",start:"2026-07-18",end:"2026-07-18",time:"下午",color:"comp",note:"福田小学",wo:false},
@@ -197,25 +197,25 @@ const defaultEvents = [
   {id:5,title:"大鹏水上运动夏令营",start:"2026-08-02",end:"2026-08-07",time:"全天",color:"camp",note:"",wo:false},
   {id:6,title:"上海迪士尼夏令营",start:"2026-08-09",end:"2026-08-14",time:"全天",color:"disney",note:"",wo:false}
 ];
-const colors = [
-  {id:"chess",name:"🟢 绿色",bg:"#e8f5e9",fg:"#43a047"},
-  {id:"swim",name:"🔵 蓝色",bg:"#e3f2fd",fg:"#1e88e5"},
-  {id:"comp",name:"🔴 红色",bg:"#ffebee",fg:"#e53935"},
-  {id:"travel",name:"🟠 橙色",bg:"#fff3e0",fg:"#f57c00"},
-  {id:"camp",name:"🟣 紫色",bg:"#f3e5f5",fg:"#8e24aa"},
-  {id:"disney",name:"🌸 粉色",bg:"#fce4ec",fg:"#e91e63"},
-  {id:"custom1",name:"🟡 黄色",bg:"#fffde7",fg:"#f9a825"},
-  {id:"custom2",name:"🩵 青色",bg:"#e0f7fa",fg:"#0097a7"},
-  {id:"custom3",name:"🤎 棕色",bg:"#efebe9",fg:"#6d4c41"}
+var colors = [
+  {id:"chess",name:"国际象棋 绿",bg:"#e8f5e9",fg:"#43a047"},
+  {id:"swim",name:"游泳 蓝",bg:"#e3f2fd",fg:"#1e88e5"},
+  {id:"comp",name:"比赛 红",bg:"#ffebee",fg:"#e53935"},
+  {id:"travel",name:"旅行 橙",bg:"#fff3e0",fg:"#f57c00"},
+  {id:"camp",name:"夏令营 紫",bg:"#f3e5f5",fg:"#8e24aa"},
+  {id:"disney",name:"迪士尼 粉",bg:"#fce4ec",fg:"#e91e63"},
+  {id:"custom1",name:"自定义 黄",bg:"#fffde7",fg:"#f9a825"},
+  {id:"custom2",name:"自定义 青",bg:"#e0f7fa",fg:"#0097a7"},
+  {id:"custom3",name:"自定义 棕",bg:"#efebe9",fg:"#6d4c41"}
 ];
 
 function loadEvents(){
-  try{return JSON.parse(localStorage.getItem("schedule2026")||"null")||defaultEvents.slice()}catch(e){return defaultEvents.slice()}
+  try{return JSON.parse(localStorage.getItem("sch2026")||"null")||defaultEvents.slice()}catch(e){return defaultEvents.slice()}
 }
-function saveEvents(evts){localStorage.setItem("schedule2026",JSON.stringify(evts))}
+function saveEvents(evts){localStorage.setItem("sch2026",JSON.stringify(evts))}
 
-let events = loadEvents();
-let editId = null;
+var events = loadEvents();
+var editId = null;
 
 // ============ RENDER ============
 function isInRange(d,s,e){var dt=new Date(d),st=new Date(s),et=new Date(e);return dt>=st&&dt<=et}
@@ -231,42 +231,47 @@ function getEventsForDay(ds){
 function renderMonth(cid,y,m){
   var c=document.getElementById(cid);c.innerHTML="";
   var fd=new Date(y,m-1,1),ld=new Date(y,m,0),sd=fd.getDay();
-  for(var i=0;i<sd;i++){c.appendChild(ce("div","day empty","<span class=day-num></span>"))}
+  for(var i=0;i<sd;i++){var d=document.createElement("div");d.className="day empty";d.innerHTML='<span class=day-num></span>';c.appendChild(d)}
   for(var d=1;d<=ld.getDate();d++){
     var mm=String(m).padStart(2,"0"),dd=String(d).padStart(2,"0"),ds=y+"-"+mm+"-"+dd;
-    var day=ce("div","day",'<span class=day-num>'+d+"</span>");
+    var day=document.createElement("div");day.className="day";
+    day.innerHTML='<span class=day-num>'+d+'</span>';
     day.setAttribute("data-date",ds);
-    day.onclick=function(){openModalForDay(this.getAttribute("data-date"))};
+    day.onclick=function(){openDay(this.getAttribute("data-date"))};
     var evts=getEventsForDay(ds),eh='<div class=day-events>';
-    evts.forEach(function(ev){eh+='<span class="evt '+ev.color+'" data-id="'+ev.id+'" onclick="event.stopPropagation();editEvent('+ev.id+')">'+ev.title+(ev.time?' '+ev.time:'')+"</span>"});
-    eh+="</div>";day.innerHTML+=eh;c.appendChild(day);
+    for(var j=0;j<evts.length;j++){var ev=evts[j];eh+='<span class="evt '+ev.color+'" data-id="'+ev.id+'">'+ev.title+(ev.time?' '+ev.time:'')+'</span>'}
+    eh+='</div>';day.innerHTML+=eh;
+    // Attach event listeners to event tags
+    (function(dayEl){setTimeout(function(){
+      var tags=dayEl.querySelectorAll('.evt');
+      for(var k=0;k<tags.length;k++){(function(tag){tag.onclick=function(e){e.stopPropagation();editEvent(parseInt(this.getAttribute('data-id')))}})(tags[k])}
+    },0)})(day);
+    c.appendChild(day);
   }
 }
 function render(){renderMonth("july-days",2026,7);renderMonth("august-days",2026,8)}
-function ce(tag,cls,html){var e=document.createElement(tag);if(cls)e.className=cls;if(html)e.innerHTML=html;return e}
 
 // ============ MODAL ============
-function openModalForDay(ds){
+function openDay(ds){
   var evts=getEventsForDay(ds);
-  var list=document.getElementById("dayEventsList");
+  document.getElementById("dayEventsList").style.display="block";
+  document.getElementById("dayEventsList").innerHTML="";
   if(evts.length>0){
-    list.style.display="block";list.innerHTML="";
-    evts.forEach(function(ev){
-      var item=ce("div","event-item");
-      item.innerHTML='<span class=event-item-name>'+ev.title+" ("+ev.time+")</span><div class=event-item-actions><button class=edit-btn onclick=editEvent('+ev.id+')>编辑</button><button class=del-btn onclick="if(confirm(\"删除?'+ev.title+'\")){deleteEventById('+ev.id+')}">删除</button></div>';
-      list.appendChild(item);
-    });
-    list.innerHTML+='<button class="btn btn-add" style="width:100%;margin-top:6px;font-size:12px;padding:8px" onclick="openAddModal(\"'+(ds)+'\")">＋ 新增日程</button>';
-  }else{list.style.display="none";openAddModal(ds);return;}
+    for(var i=0;i<evts.length;i++){(function(ev){
+      var item=document.createElement("div");item.className="event-item";
+      item.innerHTML='<span>'+ev.title+' ('+ev.time+')</span><div><button class=edit-btn onclick="editEvent('+ev.id+')">编辑</button> <button class=del-btn onclick="delEvt('+ev.id+')">删除</button></div>';
+      document.getElementById("dayEventsList").appendChild(item);
+    })(evts[i])}
+  }
+  document.getElementById("dayEventsList").innerHTML+='<button class="btn btn-add" style="width:100%;margin-top:8px;font-size:12px;padding:8px" onclick="openForm(\''+ds+'\')">＋ 新增日程</button>';
   document.getElementById("modalTitle").textContent=ds+" 日程";
   document.getElementById("modalOverlay").classList.add("active");
-  
 }
 
-function openAddModal(dateStr){
+function openForm(dateStr){
   editId=null;
-  document.getElementById("modalTitle").textContent="添加日程";
   document.getElementById("dayEventsList").style.display="none";
+  document.getElementById("modalTitle").textContent="添加日程";
   document.getElementById("evtName").value="";
   document.getElementById("evtStart").value=dateStr||"2026-07-01";
   document.getElementById("evtEnd").value=dateStr||"2026-07-01";
@@ -276,16 +281,15 @@ function openAddModal(dateStr){
   document.getElementById("evtWeekendsOff").checked=false;
   document.getElementById("btnDelete").style.display="none";
   document.getElementById("btnSave").textContent="保存";
-  
   document.getElementById("modalOverlay").classList.add("active");
 }
 
 function editEvent(id){
   editId=id;
-  var ev=events.find(function(e){return e.id===id});
+  var ev=null;for(var i=0;i<events.length;i++){if(events[i].id===id){ev=events[i];break}}
   if(!ev)return;
-  document.getElementById("modalTitle").textContent="编辑日程";
   document.getElementById("dayEventsList").style.display="none";
+  document.getElementById("modalTitle").textContent="编辑日程";
   document.getElementById("evtName").value=ev.title;
   document.getElementById("evtStart").value=ev.start;
   document.getElementById("evtEnd").value=ev.end;
@@ -295,65 +299,39 @@ function editEvent(id){
   document.getElementById("evtWeekendsOff").checked=ev.wo;
   document.getElementById("btnDelete").style.display="";
   document.getElementById("btnSave").textContent="更新";
-  
   document.getElementById("modalOverlay").classList.add("active");
-}
-
-
-  document.querySelectorAll(".field-row").forEach(function(r){r.style.display="none"});
-}
-
-  document.querySelectorAll(".field-row").forEach(function(r){r.style.display="flex"});
-  document.getElementById("btnDelete").style.display=editId?"":"none";
 }
 
 function closeModal(){document.getElementById("modalOverlay").classList.remove("active")}
 
 function saveEvent(){
   var name=document.getElementById("evtName").value.trim();
-  if(!name){toastMsg("请输入日程名称");return}
-  var start=document.getElementById("evtStart").value;
-  var end=document.getElementById("evtEnd").value;
-  var time=document.getElementById("evtTime").value.trim();
-  var color=document.getElementById("evtColor").value;
-  var note=document.getElementById("evtNote").value.trim();
-  var wo=document.getElementById("evtWeekendsOff").checked;
-  if(editId){
-    var ev=events.find(function(e){return e.id===editId});
-    if(ev){ev.title=name;ev.start=start;ev.end=end;ev.time=time;ev.color=color;ev.note=note;ev.wo=wo}
-  }else{
-    var maxId=events.reduce(function(m,e){return Math.max(m,e.id)},0);
-    events.push({id:maxId+1,title:name,start:start,end:end,time:time,color:color,note:note,wo:wo});
-  }
-  saveEvents(events);closeModal();render();toastMsg(editId?"已更新":"已添加");
+  if(!name){toast("请输入日程名称");return}
+  var evt={
+    id:editId||Math.max(0,Math.max.apply(null,events.map(function(e){return e.id})))+1,
+    title:name,start:document.getElementById("evtStart").value,end:document.getElementById("evtEnd").value,
+    time:document.getElementById("evtTime").value.trim(),color:document.getElementById("evtColor").value,
+    note:document.getElementById("evtNote").value.trim(),wo:document.getElementById("evtWeekendsOff").checked
+  };
+  if(editId){for(var i=0;i<events.length;i++){if(events[i].id===editId){events[i]=evt;break}}}
+  else{events.push(evt)}
+  saveEvents(events);closeModal();render();toast(editId?"已更新":"已添加");
   editId=null;
 }
 
-function deleteEvent(){
-  if(!editId)return;
-  deleteEventById(editId);
-  closeModal();
-}
-function deleteEventById(id){
-  if(!confirm("确认删除此日程？"))return;
-  events=events.filter(function(e){return e.id!==id});
-  saveEvents(events);render();toastMsg("已删除");
-}
+function delEvt(id){if(confirm("确认删除此日程？")){events=events.filter(function(e){return e.id!==id});saveEvents(events);closeModal();render();toast("已删除")}}
+function deleteEvent(){if(editId)delEvt(editId)}
+function resetEvents(){if(confirm("重置为默认日程？你添加的内容会丢失。")){events=defaultEvents.slice();saveEvents(events);render();toast("已重置")}}
 
-function resetEvents(){
-  if(!confirm("重置为默认日程？你添加的内容会丢失。"))return;
-  events=defaultEvents.slice();saveEvents(events);render();toastMsg("已重置");
-}
-
-function toastMsg(m){
+function toast(m){
   var t=document.getElementById("toast");t.textContent=m;t.classList.add("show");
   setTimeout(function(){t.classList.remove("show")},1800);
 }
 
 // ============ INIT ============
 (function(){
-  var sel=document.getElementById("evtColor");
-  colors.forEach(function(c){sel.innerHTML+='<option value="'+c.id+'">'+c.name+"</option>"});
+  var sel=document.getElementById("evtColor");sel.innerHTML="";
+  for(var i=0;i<colors.length;i++){sel.innerHTML+='<option value="'+colors[i].id+'">'+colors[i].name+'</option>'}
   render();
 })();
 </script>
