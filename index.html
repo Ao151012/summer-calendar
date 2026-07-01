@@ -88,6 +88,46 @@
   .legend{display:flex;flex-wrap:wrap;gap:14px 24px;justify-content:center;background:var(--card);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 6px 24px rgba(0,0,0,.05);padding:18px 28px;margin-bottom:28px}
   .legend-item{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500}
   .legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+
+  /* ---- Responsive ---- */
+  @media (max-width: 780px) {
+    .months { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    body { padding: 16px 8px 32px; }
+    .header h1 { font-size: 22px; }
+    .header { margin-bottom: 16px; }
+    .toolbar { gap: 8px; margin-bottom: 18px; }
+    .btn { padding: 8px 14px; font-size: 13px; }
+    .months { gap: 16px; margin-bottom: 20px; }
+    .month-banner { padding: 12px 0; }
+    .month-banner .month-title { font-size: 17px; }
+    .month-banner .month-sub { font-size: 10px; }
+    .weekdays { font-size: 10px; padding: 8px 0; }
+    .day { min-height: 64px; padding: 4px 3px; }
+    .day-num { font-size: 11px; width: 20px; height: 20px; margin-bottom: 1px; }
+    .evt { font-size: 8px; padding: 1px 3px; border-radius: 2px; border-left-width: 2px; }
+    .legend { gap: 8px 12px; padding: 12px 14px; margin-bottom: 20px; }
+    .legend-item { font-size: 11px; gap: 5px; }
+    .legend-dot { width: 10px; height: 10px; }
+    .modal { border-radius: 16px 16px 0 0; padding: 20px 16px 28px; }
+    .modal h2 { font-size: 16px; }
+    .field input, .field select, .field textarea { font-size: 16px; }
+  }
+  @media (max-width: 380px) {
+    .day { min-height: auto; padding: 3px 2px; }
+    .day-num { font-size: 10px; width: 18px; height: 18px; }
+    .evt { font-size: 7px; padding: 1px 2px; }
+    .weekdays { font-size: 9px; }
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .month-card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+    .legend { box-shadow: none; border: 1px solid #ddd; }
+    .day { min-height: 68px; }
+    .toolbar, .modal-overlay { display: none !important; }
+  }
+
 </style>
 </head>
 <body>
