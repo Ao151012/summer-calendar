@@ -6,7 +6,7 @@
 <title>🏖️ 陈泊儒小朋友2026暑假安排</title>
 
 <meta property="og:title" content="🏖️ 陈泊儒小朋友2026暑假安排">
-<meta property="og:description" content="国际象棋 | 游泳集训 | 新疆旅行 | 大鹏水上运动营 | 上海迪士尼营">
+<meta property="og:description" content="国际象棋 | 游泳集训 | 新疆旅行 | 大鹏水上运动夏令营 | 上海迪士尼营">
 <meta property="og:type" content="website">
 <style>
   :root {
@@ -372,7 +372,7 @@
     <div class="legend-item"><span class="legend-dot" style="background:#1e88e5"></span> 游泳课集训</div>
     <div class="legend-item"><span class="legend-dot" style="background:#e53935"></span> 国际象棋比赛</div>
     <div class="legend-item"><span class="legend-dot" style="background:#f57c00"></span> 新疆旅行</div>
-    <div class="legend-item"><span class="legend-dot" style="background:#8e24aa"></span> 大鹏水上运动营</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#8e24aa"></span> 大鹏水上运动夏令营</div>
     <div class="legend-item"><span class="legend-dot" style="background:#e91e63"></span> 上海迪士尼营</div>
   </div>
 
@@ -384,11 +384,11 @@
       </thead>
       <tbody>
         <tr><td data-label="日期">7月4日 – 7月14日</td><td data-label="活动">国际象棋课</td><td data-label="时间">上午 9:00 – 12:00</td><td data-label="接送">妈妈送，刘阿姨接</td></tr>
-        <tr><td data-label="日期">7月13日 – 7月24日</td><td data-label="活动">游泳课集训</td><td data-label="时间">下午 1:00 – 2:30</td><td data-label="接送">刘阿姨接送并陪伴</td></tr>
+        <tr><td data-label="日期">7月13日 – 7月24日</td><td data-label="活动">游泳课集训</td><td data-label="时间">13:00-14:30</td><td data-label="接送">刘阿姨接送并陪伴</td></tr>
         <tr><td data-label="日期">7月18日</td><td data-label="活动">国际象棋比赛</td><td data-label="时间">下午</td><td data-label="接送">福田小学</td></tr>
         <tr><td data-label="日期">7月25日 – 8月1日</td><td data-label="活动">新疆旅行</td><td data-label="时间">全天</td><td data-label="接送">—</td></tr>
-        <tr><td data-label="日期">8月2日 – 8月7日</td><td data-label="活动">大鹏水上运动夏令营（第二期）</td><td data-label="时间">全天</td><td data-label="接送">—</td></tr>
-        <tr><td data-label="日期">8月9日 – 8月14日</td><td data-label="活动">上海迪士尼夏令营（第二期）</td><td data-label="时间">全天</td><td data-label="接送">—</td></tr>
+        <tr><td data-label="日期">8月2日 – 8月7日</td><td data-label="活动">大鹏水上运动夏令营</td><td data-label="时间">全天</td><td data-label="接送">—</td></tr>
+        <tr><td data-label="日期">8月9日 – 8月14日</td><td data-label="活动">上海迪士尼夏令营</td><td data-label="时间">全天</td><td data-label="接送">—</td></tr>
       </tbody>
     </table>
     <div class="note-banner">
@@ -440,7 +440,10 @@ function buildMonth(containerId, year, month) {
       eventsHtml += '<span class="evt chess">象棋 9:00-12:00</span>';
     }
     if (isInRange(dateStr, "2026-07-13", "2026-07-24")) {
-      eventsHtml += '<span class="evt swim">游泳 13:00-14:30</span>';
+      var dow = new Date(dateStr).getDay();
+      if (dow !== 0 && dow !== 6) {
+        eventsHtml += '<span class="evt swim">游泳 13:00-14:30</span>';
+      }
     }
     if (dateStr === "2026-07-18") {
       eventsHtml += '<span class="evt comp">象棋比赛 下午</span>';
@@ -449,7 +452,7 @@ function buildMonth(containerId, year, month) {
       eventsHtml += '<span class="evt travel">新疆旅行</span>';
     }
     if (isInRange(dateStr, "2026-08-02", "2026-08-07")) {
-      eventsHtml += '<span class="evt camp">大鹏夏令营</span>';
+      eventsHtml += '<span class="evt camp">大鹏水上运动夏令营</span>';
     }
     if (isInRange(dateStr, "2026-08-09", "2026-08-14")) {
       eventsHtml += '<span class="evt disney">迪士尼营</span>';
