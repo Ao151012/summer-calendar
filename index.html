@@ -260,7 +260,7 @@ function openModalForDay(ds){
   }else{list.style.display="none";openAddModal(ds);return;}
   document.getElementById("modalTitle").textContent=ds+" 日程";
   document.getElementById("modalOverlay").classList.add("active");
-  hideForm();
+  
 }
 
 function openAddModal(dateStr){
@@ -276,7 +276,7 @@ function openAddModal(dateStr){
   document.getElementById("evtWeekendsOff").checked=false;
   document.getElementById("btnDelete").style.display="none";
   document.getElementById("btnSave").textContent="保存";
-  showForm();
+  
   document.getElementById("modalOverlay").classList.add("active");
 }
 
@@ -295,14 +295,14 @@ function editEvent(id){
   document.getElementById("evtWeekendsOff").checked=ev.wo;
   document.getElementById("btnDelete").style.display="";
   document.getElementById("btnSave").textContent="更新";
-  showForm();
+  
   document.getElementById("modalOverlay").classList.add("active");
 }
 
-function hideForm(){});
+
   document.querySelectorAll(".field-row").forEach(function(r){r.style.display="none"});
 }
-function showForm(){});
+
   document.querySelectorAll(".field-row").forEach(function(r){r.style.display="flex"});
   document.getElementById("btnDelete").style.display=editId?"":"none";
 }
